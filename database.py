@@ -1,7 +1,10 @@
 import sqlite3
 
 def init_db():
-    conn = sqlite3.connect("data/hrms.db")
+    import os
+os.makedirs("data", exist_ok=True)
+conn = sqlite3.connect(os.path.join("data", "hrms.db"))
+
     c = conn.cursor()
 
     # Companies
