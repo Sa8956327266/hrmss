@@ -1,10 +1,11 @@
 import sqlite3
+import os
 
 def init_db():
-    import os
-os.makedirs("data", exist_ok=True)
-conn = sqlite3.connect(os.path.join("data", "hrms.db"))
-
+    # Ensure data folder exists
+    os.makedirs("data", exist_ok=True)
+    db_path = os.path.join("data", "hrms.db")
+    conn = sqlite3.connect(db_path)
     c = conn.cursor()
 
     # Companies
@@ -32,7 +33,7 @@ conn = sqlite3.connect(os.path.join("data", "hrms.db"))
     )
     """)
 
-    # Attendance (for biometric hook)
+    # Attendance
     c.execute("""
     CREATE TABLE IF NOT EXISTS attendance (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -41,7 +42,7 @@ conn = sqlite3.connect(os.path.join("data", "hrms.db"))
         status TEXT,
         check_in_time TEXT,
         check_out_time TEXT,
-        source TEXT,      -- manual / biometric / face
+        source TEXT,
         FOREIGN KEY(user_id) REFERENCES users(id)
     )
     """)
@@ -58,7 +59,7 @@ conn = sqlite3.connect(os.path.join("data", "hrms.db"))
     )
     """)
 
-    # Payroll (auto calculation)
+    # Payroll
     c.execute("""
     CREATE TABLE IF NOT EXISTS payroll (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -86,7 +87,7 @@ conn = sqlite3.connect(os.path.join("data", "hrms.db"))
     )
     """)
 
-    # Location logs (GPS style)
+    # Location logs
     c.execute("""
     CREATE TABLE IF NOT EXISTS location_logs (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -112,5 +113,8 @@ conn = sqlite3.connect(os.path.join("data", "hrms.db"))
     conn.commit()
     conn.close()
 
+
 def get_conn():
-    return sqlite3.connect("data/hrms.db")
+    os.makedirs("data", exist_ok=True)
+    db_path = os.path.join("data", "hrms.db")
+    return sqlite3.connect(db_path)
